@@ -1,25 +1,30 @@
+
+from bs4 import BeautifulSoup
+import requests
 ###########################################################
 ##  this script prints the top 250 rated                 ##
-##  movies from imdb website, called web scrapper.       ##
+##  movies from imdb website.                            ##
 ##  Any website can be scrapped replacing the url        ##
 ##  and changing the loop for finding rows and columns.  ##
 ###########################################################
+url = "www.imdb.com/chart/top"
+r  = requests.get("http://" +url)
+data = r.text
+soup = BeautifulSoup(data)
 
-import requests
-from BeautifulSoup import BeautifulSoup
-
-##    specify url to access ##############
-url = 'http://www.imdb.com/chart/top'
-
-response = requests.get(url)
-html = response.content
-soup = BeautifulSoup(html) 
-
-##  scanning table body with class lister-list ##############
+'''headings = []           ###extracting heading
+tableheading = soup.find('thead')
+heading = tableheading.findAll('tr')
+for h in heading:
+    headings.append(h.text.strip())
+    print (headings)
+''' 
+dataset = []
 table = soup.find('tbody', attrs={'class': 'lister-list'})
-
-for row in table.findAll('tr'):
-    for cell in row.findAll('td'):
-        text = cell.text.replace('&nbsp;','')
-        print text.replace('12345678910NOT YET RELEASEDSeen',' ')
-       
+rows = table.findAll('tr')
+for row in rows:
+    column = row.findAll('td')
+    column = [element.text.strip() for element in column]
+    dataset.append([element for element in column if element])
+for i in dataset:
+    print (" ".join(i[0].split())+" "+ i[1]) 
